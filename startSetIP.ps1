@@ -1,1 +1,1 @@
-powershell -WindowStyle Hidden -File '.\SetIP.ps1'
+powershell -WindowStyle Hidden -File '.\SetIPWindow.ps1'
