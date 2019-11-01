@@ -1,7 +1,7 @@
 # GUI based on WPF
 Add-Type -AssemblyName PresentationFramework
 
-$messageBox = [System.Windows.MessageBox]
+$messageBox = [Windows.MessageBox]
 
 # Create window
 $xamlFile = '.\MainWindow.xaml'
@@ -10,7 +10,7 @@ $inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -repla
 [XML]$xaml = $inputXML
 
 # Read XAML
-$reader = [System.Xml.XmlNodeReader]::new($xaml)
+$reader = [Xml.XmlNodeReader]::new($xaml)
 $MainWindow = [Windows.Markup.XamlReader]::Load($reader)
 
 # Create variables based on form control names.
@@ -48,6 +48,7 @@ if ($account.Length -ne 0) {
 . '.\Connect.ps1'
 . '.\Login.ps1'
 . '.\Logout.ps1'
+. '.\AddShieldToButton.ps1'
 
 # Add click events
 
@@ -82,5 +83,7 @@ $MainWindow_LogoutButton.Add_Click( {
             $messageBox::Show($Error[0], 'Error')
         }
     })
+
+Add-Shield $MainWindow_SetStaticIPButton
 
 $Null = $MainWindow.ShowDialog()

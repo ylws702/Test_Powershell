@@ -24,7 +24,12 @@
         </DockPanel>
         <Button Name="ConnectButton" Content="Connect"
                 ToolTip="Turn on the WiFi and connect to SCUNET"/>
-        <Button Name="SetStaticIPButton" Content="Set static IP"/>
+        <Button Name="SetStaticIPButton">
+            <StackPanel Orientation="Horizontal">
+                <Image Name="SetStaticIPImage"/>
+                <TextBlock Text=" Set static IP"/>
+            </StackPanel>
+        </Button>
         <Button Name="LoginButton" Content="Log in"
                 ToolTip="Automatic log in SCUNET based on your id and password"/>
         <Button x:Name="KeepConnectionButton" Content="Keep connection"
