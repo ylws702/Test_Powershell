@@ -1,6 +1,15 @@
 # GUI based on WPF
 Add-Type -AssemblyName PresentationFramework
 
+if (!(Test-Path '.\SetIPWindow.xaml')) {
+    Set-Location '.\ui'
+    if (!(Test-Path '.\SetIPWindow.xaml')) {
+        break
+    }
+}
+
+$messageBox = [Windows.MessageBox]
+
 # Create window
 $xamlFile = '.\SetIPWindow.xaml'
 $inputXML = Get-Content $xamlFile -Raw
@@ -19,26 +28,27 @@ $xaml.SelectNodes("//*[@Name]") | ForEach-Object {
 }
 
 # Import ip data
-$ip = Get-Content '.\ip.json' -Encoding UTF8 | ConvertFrom-Json 
+$ip = Get-Content '..\data\ip.json' -Encoding UTF8 | ConvertFrom-Json 
 
 $ip | ForEach-Object {
     $SetIPWindow_IPListView.Items.Add($_)
 }
 
 $interface = Get-NetAdapter -Physical |
-    Where-Object -FilterScript { $_.MediaType -eq 'Native 802.11' }
+Where-Object -FilterScript { $_.MediaType -eq 'Native 802.11' }
     
 if ($interface.Count -ne 0) {
     $interfaceTable = @{ }
     $interface | ForEach-Object {
         $SetIPWindow_WiFiAdapterComboBox.Items.Add($_.InterfaceDescription)
-        $interfaceTable += @{ $_.ifIndex = $_.InterfaceDescription }
+        $interfaceTable += @{ $_.InterfaceDescription = $_.ifIndex }
     }
     $SetIPWindow_WiFiAdapterComboBox.SelectedIndex = 0
 }
 
 # Import functions
-. '.\GenerateIP.ps1'
+. '..\function\GenerateIP.ps1'
+. '..\function\SetIP.ps1'
 
 # When the selection of IPListView changed
 # update DefaultGateway, PrefixLength and generate a random IP
@@ -56,8 +66,22 @@ $SetIPWindow_IPListView.Add_SelectionChanged( {
 # Generate IP in the same subnet
 $SetIPWindow_GenerateIPButton.Add_Click( {
         $defaultGateway = $SetIPWindow_DefaultGatewayTextBlock.Text
+        if ($defaultGateway -eq '') {
+            $messageBox::Show('Please select a location first.', 'Error')
+            return
+        }
         $prefixLength = $SetIPWindow_PrefixLengthTextBlock.Text
         $SetIPWindow_IPTextBox.Text = Get-RandomIP $defaultGateway $prefixLength
     })
+$SetIPWindow_ApplyButton.Add_Click( {
+        $defaultGateway = $SetIPWindow_DefaultGatewayTextBlock.Text
+        if ($defaultGateway -eq '') {
+            $messageBox::Show('Please select a location first.', 'Error')
+            return
+        }
+        $prefixLength = $SetIPWindow_PrefixLengthTextBlock.Text
+        $ifIndex = $SetIPWindow_WiFiAdapterComboBox
+        # Set-IPConfig $ifI
+    })
 
-$Null = $SetIPWindow.ShowDialog()
+$null = $SetIPWindow.ShowDialog()

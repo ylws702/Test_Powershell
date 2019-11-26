@@ -7,7 +7,7 @@ function Invoke-Login ([string]$ID, [string]$Passwd) {
         $messageBox::Show('You''re already logged in', 'Logged in')
         return
     }
-    $href = ([regex]'index\.jsp\?(.+?)[\''\"]').Matches($redirectResponse.RawContent)
+    $href = ([Regex]'index\.jsp\?(.+?)[\''\"]').Matches($redirectResponse.RawContent)
     if ($href.Count -ne 1) {
         $messageBox::Show('Cannot find redirect href', 'Error')
         return

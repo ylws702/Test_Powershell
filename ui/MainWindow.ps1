@@ -1,6 +1,13 @@
 # GUI based on WPF
 Add-Type -AssemblyName PresentationFramework
 
+if (!(Test-Path '.\MainWindow.xaml')) {
+    Set-Location '.\ui'
+    if (!(Test-Path '.\MainWindow.xaml')) {
+        break
+    }
+}
+
 $messageBox = [Windows.MessageBox]
 
 # Create window
@@ -21,7 +28,7 @@ $xaml.SelectNodes("//*[@Name]") | ForEach-Object {
 }
 
 # 
-$account = Get-Content '.\account.json' | ConvertFrom-Json
+$account = Get-Content '..\data\account.json' | ConvertFrom-Json
 
 if ($account.Length -ne 0) {
     $MainWindow_IDComboBox.Text = $account[0].id
@@ -45,10 +52,10 @@ if ($account.Length -ne 0) {
 }
 
 # Import functions
-. '.\Connect.ps1'
-. '.\Login.ps1'
-. '.\Logout.ps1'
-. '.\AddShieldToButton.ps1'
+. '..\function\Connect.ps1'
+. '..\function\Login.ps1'
+. '..\function\Logout.ps1'
+. '..\function\AddShieldToButton.ps1'
 
 # Add click events
 
@@ -62,8 +69,10 @@ $MainWindow_ConnectButton.Add_Click( {
     })
 
 $MainWindow_SetStaticIPButton.Add_Click( {
-        $args = '-Command', "cd $PWD;& '.\startSetIP.ps1';"
-        Start-Process -FilePath powershell -ArgumentList $args -Verb runas
+        $argumentList = '-Command', "cd $PWD;& '..\startSetIP.ps1';"
+        Write-Output $argumentList
+        $messageBox::Show($Error[0], $argumentList)
+        #Start-Process -FilePath powershell -ArgumentList $argumentList -Verb runas
     })
 
 $MainWindow_LoginButton.Add_Click( {
@@ -86,4 +95,4 @@ $MainWindow_LogoutButton.Add_Click( {
 
 Add-Shield $MainWindow_SetStaticIPButton
 
-$Null = $MainWindow.ShowDialog()
+$null = $MainWindow.ShowDialog()

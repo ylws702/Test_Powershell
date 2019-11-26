@@ -1,1 +1,0 @@
-powershell -WindowStyle Hidden -File 'MainWindow.ps1'
