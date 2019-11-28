@@ -12,9 +12,8 @@ $messageBox = [Windows.MessageBox]
 
 # Create window
 $xamlFile = '.\SetIPWindow.xaml'
-$inputXML = Get-Content $xamlFile -Raw
-$inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
-[XML]$xaml = $inputXML
+$inputXML = Get-Content $xamlFile -Raw 
+[XML]$xaml = $inputXML -replace '^<Win.*', '<Window'
 
 # Read XAML
 $reader = [Xml.XmlNodeReader]::new($xaml)

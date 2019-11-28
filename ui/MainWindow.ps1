@@ -13,8 +13,7 @@ $messageBox = [Windows.MessageBox]
 # Create window
 $xamlFile = '.\MainWindow.xaml'
 $inputXML = Get-Content $xamlFile -Raw
-$inputXML = $inputXML -replace 'mc:Ignorable="d"', '' -replace 'x:N', 'N' -replace '^<Win.*', '<Window'
-[XML]$xaml = $inputXML
+[XML]$xaml = $inputXML -replace '^<Win.*', '<Window'
 
 # Read XAML
 $reader = [Xml.XmlNodeReader]::new($xaml)
@@ -69,10 +68,8 @@ $MainWindow_ConnectButton.Add_Click( {
     })
 
 $MainWindow_SetStaticIPButton.Add_Click( {
-        $argumentList = '-Command', "cd $PWD;& '..\startSetIP.ps1';"
-        Write-Output $argumentList
-        $messageBox::Show($Error[0], $argumentList)
-        #Start-Process -FilePath powershell -ArgumentList $argumentList -Verb runas
+        $argumentList = '-Command', "cd $PWD;& '..\startSetIPWindow.ps1';"
+        Start-Process -FilePath powershell -ArgumentList $argumentList -Verb runas
     })
 
 $MainWindow_LoginButton.Add_Click( {
